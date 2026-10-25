@@ -19,3 +19,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+The MIT License above covers the source code and the text of Mom Pet. It does not
+cover the images in characters/, assets/ and docs/media/, which are licensed under
+the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
+(CC BY-NC-SA 4.0): https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+- characters/hein, assets and docs/media: Copyright (c) 2026 hein.
+- characters/deepseek: fan art of the DeepSeek whale girl; who to credit is listed in
+  characters/deepseek/LICENSE.txt.

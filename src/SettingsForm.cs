@@ -219,6 +219,32 @@ sealed class SettingsForm : Form
         };
         langRow.Controls.Add(picker);
         list.Controls.Add(langRow);
+
+        // the built-in character, with who made her in small print below
+        var charRow = Stack(FlowDirection.LeftToRight);
+        charRow.Margin = new Padding(0, Px(8), 0, 0);
+        charRow.Controls.Add(new Label { Text = Lang.T("general.character"), AutoSize = true, Margin = new Padding(0, Px(5), Px(8), 0) });
+        var characters = CharacterInfo.All();
+        var charPicker = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = Px(160) };
+        foreach (CharacterInfo c in characters)
+        {
+            charPicker.Items.Add(c.Name);
+            if (c.Id == pet.Character.Id) charPicker.SelectedIndex = charPicker.Items.Count - 1;
+        }
+        var credit = new Label { AutoSize = true, ForeColor = Muted, Font = new Font(Font.FontFamily, 8.5f),
+            MaximumSize = new Size(contentWidth - Px(28), 0), Margin = new Padding(0, Px(4), 0, 0) };
+        credit.Text = pet.Character.Credit ?? "";
+        charPicker.SelectionChangeCommitted += delegate
+        {
+            CharacterInfo c = characters[charPicker.SelectedIndex];
+            if (c.Id == pet.Character.Id) return;
+            pet.SetCharacter(c.Id);
+            credit.Text = c.Credit ?? "";
+            RefreshAll();
+        };
+        charRow.Controls.Add(charPicker);
+        list.Controls.Add(charRow);
+        list.Controls.Add(credit);
         return list;
     }
 
@@ -249,7 +275,8 @@ sealed class SettingsForm : Form
         {
             if (MessageBox.Show(this, Lang.T("msg.resetall"), Lang.T("app.name"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                     != DialogResult.Yes) return;
-            foreach (string pose in Pet.Poses) File.Delete(Pet.CustomPath(pose));
+            foreach (string pose in Pet.Poses) PoseFiles.Delete(Pet.CustomDir, pose);
+            File.Delete(Path.Combine(Pet.CustomDir, CharacterInfo.FileName));
             pet.ReloadPoses();
             RefreshAll();
         };
@@ -303,7 +330,7 @@ sealed class SettingsForm : Form
         };
         resets[i].Click += delegate
         {
-            File.Delete(Pet.CustomPath(Pet.Poses[index]));
+            PoseFiles.Delete(Pet.CustomDir, Pet.Poses[index]);
             pet.ReloadPoses();
             RefreshAll();
         };
@@ -320,10 +347,16 @@ sealed class SettingsForm : Form
         {
             string pose = Pet.Poses[i];
             Image old = thumbs[i].Image;
-            thumbs[i].Image = pet.LoadPose(pose);
+            int frames;
+            using (PoseImage img = pet.LoadPose(pose))
+            {
+                thumbs[i].Image = new Bitmap(img.Frames[0]);    // an animation shows its first frame
+                frames = img.Frames.Length;
+            }
             if (old != null) old.Dispose();
-            ids[i].Text = pet.HasOwnImage(pose) ? pose : pose + "\n" + Lang.T("card.fallback");
-            bool custom = File.Exists(Pet.CustomPath(pose));
+            ids[i].Text = !pet.HasOwnImage(pose) ? pose + "\n" + Lang.T("card.fallback")
+                        : frames > 1 ? pose + "\n" + Lang.T("card.frames", frames) : pose;
+            bool custom = Pet.HasCustom(pose);
             resets[i].Enabled = custom;
             resets[i].FlatAppearance.BorderColor = custom ? Wine : Color.FromArgb(0xD8, 0xCF, 0xD2);
         }
@@ -332,26 +365,26 @@ sealed class SettingsForm : Form
     string PickImage()
     {
         using (var dialog = new OpenFileDialog { Title = Lang.T("dialog.pick"),
-            Filter = Lang.T("dialog.filter.png") + " (*.png)|*.png|" + Lang.T("dialog.filter.all") + "|*.png;*.gif;*.bmp;*.jpg;*.jpeg" })
+            Filter = Lang.T("dialog.filter.png") + " (*.png;*.gif)|*.png;*.gif|" + Lang.T("dialog.filter.all") + "|*.png;*.gif;*.bmp;*.jpg;*.jpeg" })
             return dialog.ShowDialog(this) == DialogResult.OK ? dialog.FileName : null;
     }
 
     // copies one image into the custom folder for every pose listed
     bool Import(string file, string[] poses)
     {
-        Bitmap bmp;
-        try { bmp = Pet.ReadBitmap(file); }
+        PoseImage img;
+        try { img = PoseFiles.ReadFile(file); }    // an animated GIF keeps all its frames
         catch (Exception)
         {
             MessageBox.Show(this, Lang.T("msg.cantopen"), Lang.T("app.name"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
-        using (bmp)
+        using (img)
         {
-            if (!Packs.HasTransparency(bmp) && MessageBox.Show(this, Lang.T("msg.opaque"), Lang.T("app.name"),
+            if (!Packs.HasTransparency(img.Frames[0]) && MessageBox.Show(this, Lang.T("msg.opaque"), Lang.T("app.name"),
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 return false;
-            foreach (string pose in poses) Packs.Save(bmp, pose);
+            foreach (string pose in poses) Packs.Save(img, pose);
         }
         pet.ReloadPoses();
         return true;
@@ -370,7 +403,8 @@ sealed class SettingsForm : Form
             if (dialog.ShowDialog(this) != DialogResult.OK) return;
             file = dialog.FileName;
         }
-        Dictionary<string, Bitmap> images = Packs.Read(file);
+        string info;
+        Dictionary<string, PoseImage> images = Packs.Read(file, out info);
         if (images == null)
         {
             MessageBox.Show(this, Lang.T("msg.import.bad"), Lang.T("app.name"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -387,11 +421,11 @@ sealed class SettingsForm : Form
             }
             if (MessageBox.Show(this, Lang.T("msg.import.confirm", images.Count), Lang.T("app.name"), MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) != DialogResult.Yes) return;
-            Packs.Install(images);
+            Packs.Install(images, info);
         }
         finally
         {
-            foreach (Bitmap b in images.Values) b.Dispose();
+            foreach (PoseImage p in images.Values) p.Dispose();
         }
         pet.ReloadPoses();
         RefreshAll();
@@ -401,7 +435,7 @@ sealed class SettingsForm : Form
     void ExportPack()
     {
         bool any = false;
-        foreach (string pose in Pet.Poses) any |= File.Exists(Pet.CustomPath(pose));
+        foreach (string pose in Pet.Poses) any |= Pet.HasCustom(pose);
         string fxFolder = CurrentEffectFolder();
         if (!any && fxFolder == null)
         {

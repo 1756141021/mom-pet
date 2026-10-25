@@ -18,8 +18,9 @@ general.idle.before = Hide when the pointer has not moved for
 general.idle.after = seconds; she comes back as soon as it moves
 general.size = Size
 general.language = Language
+general.character = Character
 
-images.notes = Before you change images:\n・Use PNG files with a transparent background. A picture without one (a JPG or a plain screenshot) follows the pointer as a solid rectangle.\n・Images are scaled, keeping their proportions, to fit 104 × 168 pixels (at 100% display scaling). They are never stretched, and empty transparent margins are trimmed off for you.\n・A drop shadow is added for you; a white outline is not, so draw it into the image if you want one.\n・She tilts and bounces around a point 10% above the bottom of the image, so feet near the bottom edge look most natural.\n・Animated GIFs show only their first frame.\n・A copy of each image is kept, so you can move or delete the original file afterwards.\n・Poses without an image use the Normal Select image. Once Normal Select has a custom image, every pose you have not changed uses it too, so your character is never mixed with the built-in character.\n・An image pack is a .zip file whose images are named after the English names under each card, such as default.png and link.png.
+images.notes = Before you change images:\n・Use PNG files with a transparent background. A picture without one (a JPG or a plain screenshot) follows the pointer as a solid rectangle.\n・Images are scaled, keeping their proportions, to fit 104 × 168 pixels (at 100% display scaling). They are never stretched, and empty transparent margins are trimmed off for you.\n・A drop shadow is added for you; a white outline is not, so draw it into the image if you want one.\n・She tilts and bounces around a point 10% above the bottom of the image, so feet near the bottom edge look most natural.\n・Animated GIFs play. An animation can also be idle_1.png, idle_2.png ... in a pack, with how many ms each frame stays in the pack's character.txt (for example idle.frames = 500, 300).\n・A copy of each image is kept, so you can move or delete the original file afterwards.\n・Poses without an image use the Normal Select image. Once Normal Select has a custom image, every pose you have not changed uses it too, so your character is never mixed with the built-in character.\n・An image pack is a .zip file whose images are named after the English names under each card, such as default.png and link.png.
 images.all = Use one image for all…
 images.resetall = Back to the built-in character
 images.import = Import pack…
@@ -28,6 +29,7 @@ images.export = Export pack…
 card.change = Change
 card.reset = Reset
 card.fallback = uses Normal Select
+card.frames = {0}-frame animation
 
 pose.default = Normal Select
 pose.help = Help Select

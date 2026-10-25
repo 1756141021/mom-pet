@@ -1,0 +1,14 @@
+# DeepSeek娘（藍色大肥魚）。圖片授權 CC BY-NC-SA 4.0，見同資料夾的 LICENSE.txt。
+name = DeepSeek娘
+name.en = DeepSeek-chan
+name.ja = DeepSeek娘
+credit = 原型「溟月」：上善无形；女僕鯨魚娘：ZipZipPipe｜CC BY-NC-SA 4.0
+credit.zh-hans = 原型「溟月」：上善无形；女仆鲸鱼娘：ZipZipPipe｜CC BY-NC-SA 4.0
+credit.en = Based on "Mingyue" by 上善无形 and the maid whale girl by ZipZipPipe | CC BY-NC-SA 4.0
+credit.ja = 原型「溟月」：上善无形／メイド鯨娘：ZipZipPipe｜CC BY-NC-SA 4.0
+width = 165
+height = 168
+float.width = 200
+# 待機是在吃白飯，不是睡覺，所以頭上不飄 zZ
+sleep.z = off
+idle.frames = 500, 350, 700, 600

@@ -1,7 +1,9 @@
-// Image packs: a .zip holding <pose>.png files (pose names as in Pet.Poses), for sharing a character, and
-// optionally the click effect in an effect\ folder. Only entries whose file name is a known pose are read as
-// pose images; other folders inside the zip are ignored.
+// Image packs: a .zip holding a character's pose images (<pose>.png, <pose>.gif or <pose>_1.png, <pose>_2.png ...
+// with pose names as in Pet.Poses) and its character.txt, for sharing a character, and optionally the click
+// effect in an effect\ folder. Only entries whose file name is a known pose are read as pose images; other
+// folders inside the zip are ignored.
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -12,8 +14,8 @@ static class Packs
 {
     const long MaxEntryBytes = 20 * 1024 * 1024;    // a pose image is never near this; refuse anything bigger
 
-    // writes every custom image, and the click effect from effectFolder unless it is null, into a new zip;
-    // returns how many images were written
+    // writes every custom pose with its character.txt, and the click effect from effectFolder unless it is null,
+    // into a new zip; returns how many poses were written
     public static int Export(string zipPath, string effectFolder)
     {
         if (File.Exists(zipPath)) File.Delete(zipPath);
@@ -22,11 +24,14 @@ static class Packs
         {
             foreach (string pose in Pet.Poses)
             {
-                string file = Pet.CustomPath(pose);
-                if (!File.Exists(file)) continue;
-                zip.CreateEntryFromFile(file, pose + ".png");
-                count++;
+                var files = PoseFiles.Numbered(Pet.CustomDir, pose);
+                string still = Path.Combine(Pet.CustomDir, pose + ".png");
+                if (files.Count == 0 && File.Exists(still)) files.Add(still);
+                foreach (string file in files) zip.CreateEntryFromFile(file, Path.GetFileName(file));
+                if (files.Count > 0) count++;
             }
+            string info = Path.Combine(Pet.CustomDir, CharacterInfo.FileName);
+            if (count > 0 && File.Exists(info)) zip.CreateEntryFromFile(info, CharacterInfo.FileName);
             if (effectFolder != null)
                 foreach (string file in Directory.GetFiles(effectFolder))
                     if (IsEffectFile(Path.GetFileName(file)))
@@ -95,67 +100,128 @@ static class Packs
         return id.Length == 0 ? "effect" : id;
     }
 
-    // reads the pose images in a zip; returns null when the zip cannot be opened
-    public static System.Collections.Generic.Dictionary<string, Bitmap> Read(string zipPath)
+    const int MaxFrames = 120;
+
+    // Reads the poses in a zip, with frame times from its character.txt; the other lines of that file come back
+    // in info (null when there is none). Returns null when the zip cannot be opened.
+    public static Dictionary<string, PoseImage> Read(string zipPath, out string info)
     {
-        var images = new System.Collections.Generic.Dictionary<string, Bitmap>();
+        info = null;
+        var images = new Dictionary<string, PoseImage>();
         try
         {
             using (ZipArchive zip = ZipFile.OpenRead(zipPath))
+            {
+                var still = new Dictionary<string, ZipArchiveEntry>();
+                var numbered = new Dictionary<string, SortedDictionary<int, ZipArchiveEntry>>();
                 foreach (ZipArchiveEntry entry in zip.Entries)
                 {
                     if (entry.FullName.StartsWith("effect/", StringComparison.OrdinalIgnoreCase)) continue;   // effect pictures
-                    string pose = Path.GetFileNameWithoutExtension(entry.Name).ToLowerInvariant();
-                    if (!entry.Name.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || Array.IndexOf(Pet.Poses, pose) < 0
-                        || entry.Length > MaxEntryBytes || images.ContainsKey(pose)) continue;
-                    try
+                    if (entry.Length > MaxEntryBytes) continue;
+                    if (entry.Name.Equals(CharacterInfo.FileName, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (Stream s = entry.Open())
-                        using (var ms = new MemoryStream())
-                        {
-                            s.CopyTo(ms);
-                            ms.Position = 0;
-                            using (Image img = Image.FromStream(ms)) images[pose] = new Bitmap(img);
-                        }
+                        using (var r = new StreamReader(entry.Open(), System.Text.Encoding.UTF8)) info = r.ReadToEnd();
+                        continue;
                     }
-                    catch (Exception) { }   // a broken image is skipped
+                    string name = Path.GetFileNameWithoutExtension(entry.Name).ToLowerInvariant();
+                    string ext = Path.GetExtension(entry.Name).ToLowerInvariant();
+                    if (ext != ".png" && ext != ".gif") continue;
+                    if (Array.IndexOf(Pet.Poses, name) >= 0)
+                    {
+                        if (!still.ContainsKey(name) || ext == ".gif") still[name] = entry;
+                        continue;
+                    }
+                    int cut = name.LastIndexOf('_'), n;
+                    if (ext == ".png" && cut > 0 && int.TryParse(name.Substring(cut + 1), out n) && n >= 1 && n <= MaxFrames
+                        && Array.IndexOf(Pet.Poses, name.Substring(0, cut)) >= 0)
+                    {
+                        string pose = name.Substring(0, cut);
+                        if (!numbered.ContainsKey(pose)) numbered[pose] = new SortedDictionary<int, ZipArchiveEntry>();
+                        numbered[pose][n] = entry;
+                    }
                 }
+                CharacterInfo times = CharacterInfo.Parse(info);
+                foreach (var pair in numbered)
+                {
+                    var frames = new List<Bitmap>();
+                    foreach (ZipArchiveEntry e in pair.Value.Values)
+                    {
+                        PoseImage one = Decode(e);
+                        if (one == null) continue;  // a broken frame is skipped
+                        frames.Add(one.Frames[0]);
+                        for (int i = 1; i < one.Frames.Length; i++) one.Frames[i].Dispose();
+                    }
+                    if (frames.Count > 0) images[pair.Key] = new PoseImage(frames.ToArray(), times.Delays(pair.Key, frames.Count));
+                }
+                foreach (var pair in still)
+                {
+                    if (images.ContainsKey(pair.Key)) continue;
+                    PoseImage img = Decode(pair.Value);
+                    if (img != null) images[pair.Key] = img;
+                }
+            }
         }
         catch (Exception)
         {
-            foreach (Bitmap b in images.Values) b.Dispose();
+            foreach (PoseImage p in images.Values) p.Dispose();
             return null;
         }
         return images;
     }
 
-    // replaces all custom images with these
-    public static void Install(System.Collections.Generic.Dictionary<string, Bitmap> images)
+    static PoseImage Decode(ZipArchiveEntry entry)
+    {
+        try
+        {
+            using (Stream s = entry.Open())
+            using (var ms = new MemoryStream())
+            {
+                s.CopyTo(ms);
+                ms.Position = 0;
+                return PoseFiles.Decode(ms);
+            }
+        }
+        catch (Exception) { return null; }
+    }
+
+    // replaces all custom images with these; info is the pack's character.txt (its frame times are rewritten
+    // for the frames as stored)
+    public static void Install(Dictionary<string, PoseImage> images, string info)
     {
         Directory.CreateDirectory(Pet.CustomDir);
-        foreach (string pose in Pet.Poses) File.Delete(Pet.CustomPath(pose));
+        foreach (string pose in Pet.Poses) PoseFiles.Delete(Pet.CustomDir, pose);
+        string file = Path.Combine(Pet.CustomDir, CharacterInfo.FileName);
+        if (info != null) File.WriteAllText(file, info, new System.Text.UTF8Encoding(false));
+        else File.Delete(file);
         foreach (var pair in images) Save(pair.Value, pair.Key);
     }
 
     // Stores an image for a pose: the transparent margin is cut off (the pet is scaled by the image size, so a
-    // wide empty border would make her tiny) and the longest side is shrunk to at most 640 px.
-    public static void Save(Bitmap src, string pose)
+    // wide empty border would make her tiny) and the longest side is shrunk to at most 640 px. The frames of an
+    // animation are cut and shrunk alike, so they stay lined up, and saved as <pose>_1.png, <pose>_2.png ...
+    // with their times in character.txt.
+    public static void Save(PoseImage src, string pose)
     {
         Directory.CreateDirectory(Pet.CustomDir);
-        Rectangle crop = Opaque(src);
+        PoseFiles.Delete(Pet.CustomDir, pose);
+        Rectangle crop = Opaque(src.Frames[0]);
+        foreach (Bitmap frame in src.Frames) crop = Rectangle.Union(crop, Opaque(frame));
         double f = Math.Min(1, 640.0 / Math.Max(crop.Width, crop.Height));
         int w = Math.Max(1, (int)Math.Round(crop.Width * f)), h = Math.Max(1, (int)Math.Round(crop.Height * f));
-        using (var dst = new Bitmap(w, h, PixelFormat.Format32bppArgb))
-        {
-            using (Graphics g = Graphics.FromImage(dst))
+        for (int i = 0; i < src.Frames.Length; i++)
+            using (var dst = new Bitmap(w, h, PixelFormat.Format32bppArgb))
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-                g.DrawImage(src, new Rectangle(0, 0, w, h), crop, GraphicsUnit.Pixel);
+                using (Graphics g = Graphics.FromImage(dst))
+                {
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    g.DrawImage(src.Frames[i], new Rectangle(0, 0, w, h), crop, GraphicsUnit.Pixel);
+                }
+                ClearAlphaLowBit(dst);
+                string name = src.Animated ? pose + "_" + (i + 1) : pose;
+                dst.Save(Path.Combine(Pet.CustomDir, name + ".png"), ImageFormat.Png);
             }
-            ClearAlphaLowBit(dst);
-            dst.Save(Pet.CustomPath(pose), ImageFormat.Png);
-        }
+        if (src.Animated) CharacterInfo.WriteDelays(Pet.CustomDir, pose, src.Delays);
     }
 
     // NovelAI hides the generation prompt in the lowest bit of each alpha value; an image stored at its own size

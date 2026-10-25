@@ -1,0 +1,7 @@
+# 海茵：Mom Pet 原本的角色。說明見 src\Characters.cs 開頭。
+name = 海茵
+name.en = Hein
+name.ja = ハイン
+width = 104
+height = 168
+float.width = 200

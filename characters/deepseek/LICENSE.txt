@@ -1,0 +1,13 @@
+The images in this folder are licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0):
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+They are fan art of the DeepSeek whale girl ("DeepSeek娘", "藍色大肥魚"), a community
+character that is not an official DeepSeek design:
+- the original character "溟月" by 上善无形 (June 2025), who opened her for derivative
+  works under CC BY-NC-SA 4.0 on 2 August 2026;
+- the maid whale girl design by ZipZipPipe, built on 溟月.
+
+The images were drawn with ChatGPT image generation from that design and edited for
+Mom Pet (cut out, resized, colours of one hand fixed). You may not use these images
+commercially, and anything you make from them must be shared under the same license.

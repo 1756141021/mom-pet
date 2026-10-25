@@ -113,18 +113,18 @@ sealed class Pet
     const double SAME_SPOT = 60;
     const int MAX_ON_TARGET = 3;            // clicking with the hand cursor never goes past "surprised"
     const double OFFSET_X = 6, OFFSET_Y = 4;
-    // every pose is scaled to fit this box; Moom's own images are all 104 wide and at most 167 tall
-    const double PET_WIDTH = 104, PET_HEIGHT = 168;
-    // the float pose flies sideways with wind streaks behind her, so it may be wider to keep her head the same size
-    const double FLOAT_WIDTH = 200;
+    // every pose is scaled to fit a box the character sets in its character.txt (Hein's images are all 104 wide
+    // and at most 167 tall); the float pose flies sideways, so it may be wider to keep her head the same size
+    double petWidth = 104, petHeight = 168, floatWidth = 200;
+    bool sleepZ = true;                     // Zs drift up from her head in the idle pose
     // pet canvas, in CSS px: big enough for the tallest pose tilted, squashed and popping
     const double CANVAS_W = 360, CANVAS_H = 320, ANCHOR_X = 180, ANCHOR_Y = 230;
     const double IDLE_AFTER = 8;            // seconds without pointer movement or clicks before she dozes off
     const double FLOAT_ON = 900, FLOAT_OFF = 300;   // her own speed in CSS px per second
     const double Z_SIZE = 130;
 
-    readonly Dictionary<string, Bitmap> sources = new Dictionary<string, Bitmap>();
-    readonly Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+    readonly Dictionary<string, PoseImage> sources = new Dictionary<string, PoseImage>();
+    readonly Dictionary<string, Sprite[]> sprites = new Dictionary<string, Sprite[]>();   // one per frame
     readonly Dictionary<IntPtr, string> cursorPoses = new Dictionary<IntPtr, string>();
     readonly IntPtr handCursor;
     readonly Stopwatch clock = Stopwatch.StartNew();
@@ -170,6 +170,7 @@ sealed class Pet
     double hop, hopV;                       // click jump (negative = up)
     double wig, wigV;                       // click wiggle (deg)
     string pose = "default";
+    double poseStart;                       // when the current pose came up; animations start from their first frame
     string hoverPose = "default";           // pose picked by the system cursor shape
     string reaction;                        // click reaction, shown over hoverPose while set
     int peakMood;
@@ -181,10 +182,14 @@ sealed class Pet
     double headX, headY;                    // screen position above her head where sleep Zs start
     int zCount;
 
+    CharacterInfo character;                // UI thread: the built-in character chosen in settings
+
     public Pet(string assetDir)
     {
         this.assetDir = assetDir;
+        character = CharacterInfo.Find(Settings.Character);
         foreach (string p in Poses) sources[p] = LoadPose(p);
+        ApplyLook(Look());
         // system cursor handles stay fixed when the cursor scheme changes, so one lookup is enough
         for (int i = 0; i < CursorIds.Length; i++)
             cursorPoses[Native.LoadCursor(IntPtr.Zero, (IntPtr)CursorIds[i])] = CursorPoses[i];
@@ -303,36 +308,57 @@ sealed class Pet
         Native.PostThreadMessage(renderThreadId, 0 /* WM_NULL: wake it up */, IntPtr.Zero, IntPtr.Zero);
     }
 
-    public static string CustomPath(string pose)
+    public static bool HasCustom(string pose)
     {
-        return Path.Combine(CustomDir, pose + ".png");
+        return PoseFiles.Exists(CustomDir, pose);
+    }
+
+    public CharacterInfo Character { get { return character; } }
+
+    // switches to another built-in character; call from the UI thread
+    public void SetCharacter(string id)
+    {
+        character = CharacterInfo.Find(id);
+        Settings.Character = character.Id;
+        ReloadPoses();
     }
 
     // Which image a pose shows: its custom image; else, once "default" has a custom image, that one (so a
-    // custom character is never mixed with Moom); else Moom's image for the pose; else Moom's "default".
-    public Bitmap LoadPose(string pose)
+    // custom character is never mixed with a built-in one); else the character's image for the pose; else
+    // the character's "default".
+    public PoseImage LoadPose(string pose)
     {
-        Bitmap bmp;
-        if (TryRead(CustomPath(pose), out bmp)) return bmp;
-        if (pose != "default" && TryRead(CustomPath("default"), out bmp)) return bmp;
-        if (TryRead(Path.Combine(assetDir, pose + ".png"), out bmp)) return bmp;
-        return ReadBitmap(Path.Combine(assetDir, "default.png"));
+        CharacterInfo custom = CharacterInfo.Load(CustomDir);
+        PoseImage img = PoseFiles.Read(CustomDir, pose, custom);
+        if (img == null && pose != "default") img = PoseFiles.Read(CustomDir, "default", custom);
+        if (img == null) img = PoseFiles.Read(character.Dir, pose, character);
+        if (img == null) img = PoseFiles.Read(character.Dir, "default", character);
+        return img ?? PoseImage.Still(new Bitmap(1, 1));
     }
 
     // whether the pose shows an image of its own rather than falling back to "default"
     public bool HasOwnImage(string pose)
     {
-        if (pose == "default" || File.Exists(CustomPath(pose))) return true;
-        return !File.Exists(CustomPath("default")) && File.Exists(Path.Combine(assetDir, pose + ".png"));
+        if (pose == "default" || HasCustom(pose)) return true;
+        return !HasCustom("default") && PoseFiles.Exists(character.Dir, pose);
     }
 
-    static bool TryRead(string path, out Bitmap bmp)
+    // the box and sleep Zs come from the custom images' character.txt once she is a custom character
+    sealed class LookInfo { public double W, H, FloatW; public bool SleepZ; }
+
+    LookInfo Look()
     {
-        bmp = null;
-        if (!File.Exists(path)) return false;
-        try { bmp = ReadBitmap(path); }
-        catch (Exception) { }               // a broken file counts as missing
-        return bmp != null;
+        CharacterInfo c = HasCustom("default") ? CharacterInfo.Load(CustomDir) : character;
+        return new LookInfo { W = c.Width, H = c.Height, FloatW = c.FloatWidth, SleepZ = c.SleepZ };
+    }
+
+    // render thread (or before it starts)
+    void ApplyLook(LookInfo look)
+    {
+        petWidth = look.W;
+        petHeight = look.H;
+        floatWidth = look.FloatW;
+        sleepZ = look.SleepZ;
     }
 
     public static Bitmap ReadBitmap(string path)
@@ -342,27 +368,32 @@ sealed class Pet
             return new Bitmap(img);
     }
 
-    // call from the UI thread after custom images were added or removed; since every pose may fall back to
+    // call from the UI thread after custom images or the character changed; since every pose may fall back to
     // "default", all poses are reloaded
     public void ReloadPoses()
     {
-        var fresh = new Dictionary<string, Bitmap>();
+        var fresh = new Dictionary<string, PoseImage>();
         foreach (string p in Poses) fresh[p] = LoadPose(p);
+        LookInfo look = Look();
         Post(delegate
         {
+            ApplyLook(look);
             foreach (string p in Poses)
             {
                 sources[p].Dispose();
                 sources[p] = fresh[p];
-                Sprite sp;
-                if (sprites.TryGetValue(p, out sp))
-                {
-                    sp.Image.Dispose();
-                    sprites.Remove(p);
-                    if (scale > 0) GetSprite(p);
-                }
+                DropSprites(p);
+                if (scale > 0) GetSprites(p);
             }
         });
+    }
+
+    void DropSprites(string p)
+    {
+        Sprite[] frames;
+        if (!sprites.TryGetValue(p, out frames)) return;
+        foreach (Sprite sp in frames) sp.Image.Dispose();
+        sprites.Remove(p);
     }
 
     // call from the UI thread after the language changed
@@ -549,10 +580,9 @@ sealed class Pet
         {
             scale = s;
             zoom = s * size;
-            foreach (Sprite sp in sprites.Values) sp.Image.Dispose();
-            sprites.Clear();
+            foreach (string p in Poses) DropSprites(p);
             // render every pose now, so switching to a pose for the first time never stalls a frame
-            foreach (string p in Poses) GetSprite(p);
+            foreach (string p in Poses) GetSprites(p);
             layer.Resize((int)Math.Ceiling(CANVAS_W * zoom), (int)Math.Ceiling(CANVAS_H * zoom));
         }
         if (now >= nextCheck)
@@ -607,7 +637,7 @@ sealed class Pet
         SetPose(next, now);
 
         foreach (Burst b in bursts) if (b.Active) DrawBurst(b, now);
-        if (pose == "idle" && !reduceMotion && alpha > 0.9 && now >= nextZ)
+        if (pose == "idle" && sleepZ && !reduceMotion && alpha > 0.9 && now >= nextZ)
         {
             SpawnZ(now);
             nextZ = now + 1.3;
@@ -678,7 +708,7 @@ sealed class Pet
             else pop = 0.7 + 0.3 * Ease.Bezier(.3, 1.6, .5, 1, t);
         }
 
-        Sprite sprite = GetSprite(pose);
+        Sprite sprite = GetSprites(pose)[reduceMotion ? 0 : sources[pose].FrameAt(now - poseStart)];
         float w = sprite.W, h = sprite.H;
         // transform origin is 50% 90% of the pet box, as in the web version
         double ox = px + shakeX * zoom + 0.5 * w, oy = py + (hop + shakeY) * zoom + 0.9 * h;
@@ -774,18 +804,25 @@ sealed class Pet
         if (next == pose) return;
         pose = next;
         popStart = now;
+        poseStart = now;
     }
 
-    Sprite GetSprite(string name)
+    // every frame of a pose, scaled for the current zoom; the frames of an animation share one scale, taken
+    // from the first frame, so a frame drawn a little bigger does not shrink the others
+    Sprite[] GetSprites(string name)
     {
-        Sprite sp;
-        if (!sprites.TryGetValue(name, out sp))
+        Sprite[] frames;
+        if (!sprites.TryGetValue(name, out frames))
         {
-            double maxW = name == "float" ? FLOAT_WIDTH : PET_WIDTH;
-            sp = Sprite.Render(sources[name], maxW * zoom, PET_HEIGHT * zoom, zoom);
-            sprites[name] = sp;
+            PoseImage src = sources[name];
+            double maxW = name == "float" ? floatWidth : petWidth;
+            double fit = Math.Min(maxW / src.Frames[0].Width, petHeight / src.Frames[0].Height);
+            frames = new Sprite[src.Frames.Length];
+            for (int i = 0; i < frames.Length; i++)
+                frames[i] = Sprite.Render(src.Frames[i], src.Frames[i].Width * fit * zoom, src.Frames[i].Height * fit * zoom, zoom);
+            sprites[name] = frames;
         }
-        return sp;
+        return frames;
     }
 
     // ---- click burst: a ring and particles from the chosen effect file, each burst in its own small window ----
@@ -1423,6 +1460,21 @@ static class Settings
     {
         get { return Math.Max(50, Math.Min(200, Read("SizePercent", 100))); }
         set { Write("SizePercent", value); }
+    }
+
+    // the folder name of the chosen built-in character in characters\
+    public static string Character
+    {
+        get
+        {
+            using (RegistryKey k = Registry.CurrentUser.OpenSubKey(Key))
+                return (k == null ? null : k.GetValue("Character") as string) ?? CharacterInfo.DefaultId;
+        }
+        set
+        {
+            using (RegistryKey k = Registry.CurrentUser.CreateSubKey(Key))
+                k.SetValue("Character", value, RegistryValueKind.String);
+        }
     }
 
     // a lang\<code>.txt file name, or null to follow the Windows display language

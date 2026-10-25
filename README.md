@@ -4,7 +4,7 @@
 
 <p align="center"><img src="docs/media/follow.gif" width="720" alt="跟著游標跑"></p>
 
-> 現在內建的是我自己的 OC！之後會加上大肥魚和 Claude 小姐，可以自己選哦~
+> 內建兩個角色：我自己的 OC 海茵，還有吃白飯的藍色大肥魚 DeepSeek娘！在設定頁就能換~ Claude 小姐之後也會來哦！
 
 ## 下載
 
@@ -46,11 +46,11 @@
 
 ## 設定
 
-右下角系統匣的黃貓點一下就能打開設定！可以暫停、開機自動啟動、截圖和錄影時把她藏起來、滑鼠不動一陣子就讓她消失、調大小（50%～200%），介面有繁中、简中、English、日本語。全螢幕玩遊戲或放簡報的時候，她會自己躲起來哦~
+右下角系統匣的黃貓點一下就能打開設定！可以換角色、暫停、開機自動啟動、截圖和錄影時把她藏起來、滑鼠不動一陣子就讓她消失、調大小（50%～200%），介面有繁中、简中、English、日本語。全螢幕玩遊戲或放簡報的時候，她會自己躲起來哦~
 
 ## 換成你自己的角色
 
-準備去背的 PNG，在設定頁換上去就好啦！只放一張 `default.png` 也能用，沒畫的表情都會用它代替。整套圖片也能打包成 zip 分享給別人。想用 NovelAI 或 ChatGPT 畫一整套表情的話，看這裡：[角色圖片創作指南](docs/角色圖片創作指南.md)
+準備去背的 PNG，在設定頁換上去就好啦！會動的 GIF 也可以哦~ 只放一張 `default.png` 也能用，沒畫的表情都會用它代替。整套圖片也能打包成 zip 分享給別人，動畫可以用 `idle_1.png`、`idle_2.png` 這樣一格一格放進去。想用 NovelAI 或 ChatGPT 畫一整套表情的話，看這裡：[角色圖片創作指南](docs/角色圖片創作指南.md)
 
 ## 自己做點擊特效
 
@@ -62,10 +62,16 @@
 
 ## 自己編譯
 
-只要 Windows 內建的 .NET Framework 4，不用裝 Visual Studio。在資料夾裡執行 `build.cmd` 就會產生 `MomPet.exe`，執行的時候要跟 `assets`、`lang`、`effects` 三個資料夾放在一起。
+只要 Windows 內建的 .NET Framework 4，不用裝 Visual Studio。在資料夾裡執行 `build.cmd` 就會產生 `MomPet.exe`，執行的時候要跟 `assets`、`characters`、`lang`、`effects` 四個資料夾放在一起。
+
+想多加一個內建角色，就在 `characters` 裡開一個資料夾放圖片，再寫一個 `character.txt`，可以設定名字、作者、大小、動畫每格的時間，寫法看 `src\Characters.cs` 最上面的說明~
 
 加上 `--settings` 會一打開就顯示設定頁，加上 `--stats` 會每 5 秒把幀率寫進 exe 旁邊的 `stats.log`。設定存在 `HKCU\Software\MomPet`，自訂的圖片和特效存在 `%LOCALAPPDATA%\MomPet\`。
 
 ## 授權
 
-[MIT](LICENSE)，隨便用~
+程式碼是 [MIT](LICENSE)，隨便用~
+
+圖片（`characters`、`assets`、`docs/media` 裡的）是 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)：要署名、不能商用、改了要用一樣的授權分享哦！
+
+DeepSeek娘是社群的二創角色，不是 DeepSeek 官方的設定。原型是上善无形的「溟月」，女僕鯨魚娘是 ZipZipPipe 畫的，詳細看 [characters/deepseek/LICENSE.txt](characters/deepseek/LICENSE.txt)。
