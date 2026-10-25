@@ -1,6 +1,8 @@
 # Mom Pet
 
-一隻會跟著滑鼠跑的 Windows 桌面寵物~！游標變成什麼樣子，她就換什麼表情；點她會跳，一直點會生氣，點太多還會暈過去哦！滑鼠不動的話她就睡著啦。她是透明的，點擊會直接穿過去，完全不會擋到你做事情~
+**繁體中文** | [简体中文](README.zh-Hans.md) | [English](README.en.md) | [日本語](README.ja.md)
+
+一隻會跟著滑鼠跑的 Windows 桌面寵物~！游標變成什麼樣子，她就換什麼表情；點她會跳，一直點會生氣，點太多還會暈過去哦！滑鼠不動的話她就開始發呆啦。她是透明的，點擊會直接穿過去，完全不會擋到你做事情~
 
 <p align="center"><img src="docs/media/follow.gif" width="720" alt="跟著游標跑"></p>
 
@@ -8,7 +10,7 @@
 
 ## 下載
 
-到 [Releases](../../releases) 下載 zip，解壓縮後點 `MomPet.exe` 就好啦！Windows 10 / 11 都能直接用，不用另外裝東西。
+到 [Releases](../../releases) 下載 zip，解壓縮後點 `MomPet.exe` 就好啦！Windows 10 / 11 都能直接用，不用另外裝東西。第一次打開如果跳出「Windows 已保護您的電腦」，按「其他資訊」再按「仍要執行」就好~
 
 ## 她會做什麼
 
@@ -32,7 +34,7 @@
 
 <p align="center"><img src="docs/media/clicks.gif" width="480" alt="連點"></p>
 
-**睡覺**：滑鼠 8 秒不動，她就開始打瞌睡，頭上會飄 z。一動滑鼠她會被嚇醒！
+**發呆**：滑鼠 8 秒不動，她就開始做自己的事：DeepSeek娘捧著一大碗白飯吃，Claude小姐捧著橘色星芒想事情，海茵會打瞌睡、頭上飄 z。一動滑鼠她會被嚇一跳！
 
 <p align="center"><img src="docs/media/idle.gif" width="420" alt="睡著和嚇醒"></p>
 

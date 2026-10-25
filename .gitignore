@@ -8,3 +8,4 @@ stats.log
 # portfolio code the cursor was ported from
 reference/
 !/README.md
+!/README.*.md
