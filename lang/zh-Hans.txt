@@ -1,0 +1,96 @@
+# Mom Pet 界面文字（简体中文）。格式：键 = 文字；\n 是换行；# 开头是注释。
+language.name = 简体中文
+app.name = Mom Pet
+font = Microsoft YaHei UI
+
+tray.settings = 设置
+tray.quit = 退出
+
+settings.title = Mom Pet 设置
+section.general = 常规
+section.images = 自定义图片
+
+general.pause = 暂停（角色先休息，不跟着鼠标）
+general.startup = 开机自动启动
+general.capture = 截图和录屏时隐藏（只有自己的屏幕看得到她）
+general.idle.before = 鼠标停住
+general.idle.after = 秒后隐藏，鼠标一动她就回来
+general.size = 大小
+general.language = 语言
+
+images.notes = 换图前请注意：\n・请用背景透明的 PNG。背景不透明的图片（例如 JPG 或普通截图）会变成一个方块跟着鼠标。\n・图片会等比例缩放到宽最多 104、高最多 168 像素（屏幕缩放 100% 时），不会被拉长变形。图片四周的透明空白会自动裁掉。\n・阴影会自动加上；白边不会自动加，想要白边请先画在图上。\n・角色倾斜和弹跳的支点在图片底部往上 10% 的地方，人物的脚画在靠近图片底部会比较自然。\n・会动的 GIF 只会显示第一帧。\n・换上的图会复制一份保存，之后移走或删掉原来的文件也没关系。\n・没有图的表情会用「正常选择」那张图。换过「正常选择」之后，其他没换的表情也会跟着用它，不会和默认角色的图混在一起。\n・图片包是一个 .zip 压缩包，里面的图用卡片下方的英文名称命名，例如 default.png、link.png。
+images.all = 全部换成同一张…
+images.resetall = 全部换回默认角色
+images.import = 导入图片包…
+images.export = 导出图片包…
+
+card.change = 更换
+card.reset = 还原
+card.fallback = 用正常选择的图
+
+pose.default = 正常选择
+pose.help = 帮助选择
+pose.working = 后台运行
+pose.busy = 忙
+pose.zoom = 精确选择
+pose.handwriting = 文本选择
+pose.pen = 手写
+pose.unavailable = 不可用
+pose.resize_ns = 垂直调整大小
+pose.resize_we = 水平调整大小
+pose.resize_nwse = 沿对角线调整大小 1
+pose.resize_nesw = 沿对角线调整大小 2
+pose.move = 移动
+pose.alternate = 候选
+pose.link = 链接选择
+pose.location = 位置选择
+pose.person = 个人选择
+pose.idle = 待机（鼠标停住 8 秒）
+pose.float = 漂浮（鼠标快速移动时）
+pose.happy = 点 1 下
+pose.surprised = 同一个地方连点 3 下
+pose.flustered = 同一个地方连点 5 下
+pose.annoyed = 同一个地方连点 8 下
+pose.angry = 同一个地方连点 11 下
+pose.dizzy = 同一个地方连点 16 下
+pose.sulk = 被连点 8 下以上、停手后
+
+dialog.pick = 选一张图片
+dialog.filter.png = PNG 图片
+dialog.filter.all = 所有图片
+dialog.pack = Mom Pet 图片包
+
+msg.resetall = 要把所有表情全部换回默认角色的图吗？
+msg.cantopen = 这个文件打不开，请换一张图片。
+msg.opaque = 这张图没有透明的地方，换上去以后会变成一个方块跟着鼠标。\n还是要用这张吗？
+msg.import.confirm = 这个图片包里有 {0} 张可以用的图。导入会替换当前所有的自定义图片，要继续吗？
+msg.import.none = 这个压缩包里没有能用的图片。图片要用表情的英文名称命名，例如 default.png、link.png。
+msg.import.bad = 这个压缩包打不开。
+msg.export.none = 还没有自定义图片，没有东西可以导出。
+msg.export.done = 导出了 {0} 张图片。
+
+section.effects = 点击特效
+effects.choose = 特效
+effects.off = 关闭
+effects.import = 导入特效…
+effects.copy = 复制来改
+effects.open = 打开特效文件夹
+effects.reload = 重新加载
+effects.filter = 特效压缩包
+effects.none = 这个压缩包里没有特效（要有一个 effect.txt）。
+effects.broken = 这个特效加载失败：\n{0}
+effects.note = 特效是一个文件夹，里面有一个 effect.txt 和用到的图片。点「复制来改」会把当前的特效复制到你的特效文件夹并打开，用记事本改完保存，再点「重新加载」就能看到效果。写法说明在程序文件夹的 docs\点击特效说明.md（繁体中文）。导出图片包时，当前选的特效也会一起放进去。
+
+fx.err.at = 第 {0} 行：{1}
+fx.err.line = 这一行没有「=」。
+fx.err.key = 不认识「{0}」这个设置。
+fx.err.syntax = 公式看不懂：「{0}」
+fx.err.end = 公式少了东西，结尾不完整。
+fx.err.paren = 括号没有配对。
+fx.err.name = 不认识「{0}」。
+fx.err.args = {0} 需要 {1} 个参数。
+fx.err.number = 「{0}」不是数字。
+fx.err.color = 「{0}」不是颜色，请写成 #RRGGBB，例如 #8B1E3F。
+fx.err.shape = 不认识「{0}」这种粒子，可以用 star、heart、dot 或 image。
+fx.err.image = 找不到图片「{0}」，图片要放在 effect.txt 同一个文件夹，只写文件名。
+fx.err.missing = 找不到特效「{0}」。

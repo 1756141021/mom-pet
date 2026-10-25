@@ -1,0 +1,33 @@
+# 星星和愛心：Mom Pet 預設的點擊特效，也是寫特效的範本。
+# 格式和每一項的意思見 docs\點擊特效說明.md。# 後面是註解，顏色的 #8B1E3F 不算。
+
+name = 星星和愛心
+name.zh-Hans = 星星和爱心
+name.en = Stars and hearts
+name.ja = 星とハート
+
+# 特效總長 0.6 秒；小視窗 140 像素見方，點擊的位置在正中間
+time = 0.6
+size = 140
+
+# 光環：線的半徑 18.5、粗 3，外面一圈 2 像素白邊；0.45 秒內從 0.2 倍放大到 1.3 倍並淡出
+ring = on
+ring.color = #8B1E3F
+ring.edge = #FFFFFF
+ring.radius = 18.5
+ring.width = 3
+ring.edge.width = 2
+ring.scale = 0.2 + 1.1 * easeout(time / 0.45)
+ring.alpha = 1 - easeout(time / 0.45)
+
+# 粒子：6 顆平均分散在一圈上，各自飛出 26 到 40 像素，再往下掉 14 像素
+particles = 6
+particle.x = cos(angle) * (26 + 14 * r1) * ease(t)
+particle.y = (sin(angle) * (26 + 14 * r1) + 14) * ease(t)
+particle.scale = 0.4 + 0.6 * ease(t)
+particle.spin = (r2 - 0.5) * 120 * ease(t)
+particle.alpha = fade(t, 0.7)
+
+# 粒子輪流用這兩種
+particle.1 = star #E8B84A
+particle.2 = heart #B8264F

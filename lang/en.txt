@@ -1,0 +1,97 @@
+# Mom Pet interface text (English). Format: key = text; \n is a line break; lines starting with # are comments.
+# Keys missing from another language file are taken from this one.
+language.name = English
+app.name = Mom Pet
+font = Segoe UI
+
+tray.settings = Settings
+tray.quit = Quit
+
+settings.title = Mom Pet Settings
+section.general = General
+section.images = Custom images
+
+general.pause = Pause (your character takes a break and stops following the pointer)
+general.startup = Start with Windows
+general.capture = Hide from screenshots and recordings (only your own screen shows her)
+general.idle.before = Hide when the pointer has not moved for
+general.idle.after = seconds; she comes back as soon as it moves
+general.size = Size
+general.language = Language
+
+images.notes = Before you change images:\n・Use PNG files with a transparent background. A picture without one (a JPG or a plain screenshot) follows the pointer as a solid rectangle.\n・Images are scaled, keeping their proportions, to fit 104 × 168 pixels (at 100% display scaling). They are never stretched, and empty transparent margins are trimmed off for you.\n・A drop shadow is added for you; a white outline is not, so draw it into the image if you want one.\n・She tilts and bounces around a point 10% above the bottom of the image, so feet near the bottom edge look most natural.\n・Animated GIFs show only their first frame.\n・A copy of each image is kept, so you can move or delete the original file afterwards.\n・Poses without an image use the Normal Select image. Once Normal Select has a custom image, every pose you have not changed uses it too, so your character is never mixed with the built-in character.\n・An image pack is a .zip file whose images are named after the English names under each card, such as default.png and link.png.
+images.all = Use one image for all…
+images.resetall = Back to the built-in character
+images.import = Import pack…
+images.export = Export pack…
+
+card.change = Change
+card.reset = Reset
+card.fallback = uses Normal Select
+
+pose.default = Normal Select
+pose.help = Help Select
+pose.working = Working in Background
+pose.busy = Busy
+pose.zoom = Precision Select
+pose.handwriting = Text Select
+pose.pen = Handwriting
+pose.unavailable = Unavailable
+pose.resize_ns = Vertical Resize
+pose.resize_we = Horizontal Resize
+pose.resize_nwse = Diagonal Resize 1
+pose.resize_nesw = Diagonal Resize 2
+pose.move = Move
+pose.alternate = Alternate Select
+pose.link = Link Select
+pose.location = Location Select
+pose.person = Person Select
+pose.idle = Idle (pointer still for 8 s)
+pose.float = Floating (pointer moving fast)
+pose.happy = 1 click
+pose.surprised = 3 quick clicks in one spot
+pose.flustered = 5 quick clicks in one spot
+pose.annoyed = 8 quick clicks in one spot
+pose.angry = 11 quick clicks in one spot
+pose.dizzy = 16 quick clicks in one spot
+pose.sulk = After 8 or more clicks stop
+
+dialog.pick = Choose an image
+dialog.filter.png = PNG images
+dialog.filter.all = All images
+dialog.pack = Mom Pet image pack
+
+msg.resetall = Change every pose back to the built-in character's images?
+msg.cantopen = This file cannot be opened. Please choose another image.
+msg.opaque = This image has no transparent pixels, so it will follow the pointer as a solid rectangle.\nUse it anyway?
+msg.import.confirm = This pack has {0} usable images. Importing replaces all your current custom images. Continue?
+msg.import.none = This zip has no usable images. Name each image after a pose's English name, such as default.png or link.png.
+msg.import.bad = This zip file cannot be opened.
+msg.export.none = There are no custom images to export yet.
+msg.export.done = Exported {0} images.
+
+section.effects = Click effect
+effects.choose = Effect
+effects.off = Off
+effects.import = Import effect…
+effects.copy = Copy to edit
+effects.open = Open effects folder
+effects.reload = Reload
+effects.filter = Effect zip
+effects.none = This zip has no effect in it (it needs an effect.txt).
+effects.broken = This effect could not be loaded:\n{0}
+effects.note = An effect is a folder with an effect.txt and the pictures it uses. Copy to edit copies the current effect into your effects folder and opens it; change it in Notepad, save, and press Reload to see it. The format is explained in docs\點擊特效說明.md in the program folder (in Traditional Chinese). Exporting an image pack includes the current effect.
+
+fx.err.at = Line {0}: {1}
+fx.err.line = This line has no "=".
+fx.err.key = Unknown setting "{0}".
+fx.err.syntax = Cannot read the formula at "{0}".
+fx.err.end = The formula ends too early.
+fx.err.paren = A bracket is not closed.
+fx.err.name = Unknown name "{0}".
+fx.err.args = {0} takes {1} values.
+fx.err.number = "{0}" is not a number.
+fx.err.color = "{0}" is not a colour; write #RRGGBB, such as #8B1E3F.
+fx.err.shape = Unknown particle "{0}"; use star, heart, dot or image.
+fx.err.image = Picture "{0}" not found; put it beside effect.txt and give only its file name.
+fx.err.missing = Effect "{0}" not found.

@@ -1,0 +1,9 @@
+# built by build.cmd
+MomPet.exe
+# written next to the exe at run time
+crash.log
+stats.log
+# personal notes and project instructions stay local
+/*.md
+# portfolio code the cursor was ported from
+reference/

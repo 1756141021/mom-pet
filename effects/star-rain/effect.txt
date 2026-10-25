@@ -1,0 +1,30 @@
+# 星星雨：點擊的地方灑下一把星星，像下雨一樣往下掉。示範怎麼把「四散」改成「墜落」。
+
+name = 星星雨
+name.zh-Hans = 星星雨
+name.en = Star rain
+name.ja = 星の雨
+
+# 掉得比較遠，所以時間長一點、小視窗大一點
+time = 1.0
+size = 240
+
+# 光環小一點、快一點
+ring = on
+ring.color = #D8A53A
+ring.edge = #FFFFFF
+ring.radius = 12
+ring.scale = 0.3 + 0.9 * easeout(time / 0.3)
+ring.alpha = 1 - easeout(time / 0.3)
+
+# 8 顆在點擊處左右散開，然後越掉越快（t * t），一邊左右輕晃一邊轉
+particles = 8
+particle.x = (r1 - 0.5) * 60 + sin(t * 6 + i) * 4
+particle.y = -10 + 110 * t * t
+particle.scale = 0.6 + 0.4 * sin(t * pi)
+particle.spin = (r2 - 0.5) * 360 * t
+particle.alpha = fade(t, 0.6)
+
+particle.1 = star #E8B84A
+particle.2 = dot #FFFFFF
+particle.3 = star #F3D27A

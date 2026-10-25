@@ -1,0 +1,96 @@
+# Mom Pet のインターフェース文字（日本語）。形式：キー = 文字；\n は改行；# で始まる行はコメント。
+language.name = 日本語
+app.name = Mom Pet
+font = Yu Gothic UI
+
+tray.settings = 設定
+tray.quit = 終了
+
+settings.title = Mom Pet の設定
+section.general = 一般
+section.images = カスタム画像
+
+general.pause = 一時停止（キャラクターはひと休みして、ポインターについて行きません）
+general.startup = Windows の起動時に開始する
+general.capture = スクリーンショットと録画に映さない（自分の画面にだけ表示）
+general.idle.before = ポインターが止まって
+general.idle.after = 秒たったら隠れる（動かすとすぐ戻ります）
+general.size = 大きさ
+general.language = 言語
+
+images.notes = 画像を変える前に：\n・背景が透明な PNG を使ってください。背景が透明でない画像（JPG や普通のスクリーンショット）は四角い板のままポインターについて行きます。\n・画像は縦横比を保ったまま、幅 104・高さ 168 ピクセル（表示スケール 100% のとき）に収まるよう拡大縮小されます。引き伸ばされることはありません。周りの透明な余白は自動で切り取られます。\n・影は自動で付きます。白いふちは付かないので、必要なら画像に描いておいてください。\n・傾きと跳ねる動きの支点は画像の下端から 10% 上なので、足を下端近くに描くと自然に見えます。\n・アニメーション GIF は最初のコマだけ表示されます。\n・画像はコピーして保存されるので、元のファイルは後で移動・削除してもかまいません。\n・画像のないポーズには「通常の選択」の画像が使われます。「通常の選択」を変えると、変えていない他のポーズもその画像になり、最初から入っているキャラクターの画像と混ざりません。\n・画像パックは .zip ファイルで、中の画像は各カードの下にある英語名で名付けます（例：default.png、link.png）。
+images.all = すべて同じ画像にする…
+images.resetall = すべて最初のキャラクターに戻す
+images.import = 画像パックを読み込む…
+images.export = 画像パックを書き出す…
+
+card.change = 変更
+card.reset = 戻す
+card.fallback = 通常の選択の画像
+
+pose.default = 通常の選択
+pose.help = ヘルプの選択
+pose.working = バックグラウンドで作業中
+pose.busy = 待ち状態
+pose.zoom = 領域選択
+pose.handwriting = テキスト選択
+pose.pen = 手書き
+pose.unavailable = 利用不可
+pose.resize_ns = 上下に拡大/縮小
+pose.resize_we = 左右に拡大/縮小
+pose.resize_nwse = 斜めに拡大/縮小 1
+pose.resize_nesw = 斜めに拡大/縮小 2
+pose.move = 移動
+pose.alternate = 代替選択
+pose.link = リンクの選択
+pose.location = 場所の選択
+pose.person = 人の選択
+pose.idle = 待機（ポインターが 8 秒止まったとき）
+pose.float = ふわふわ（ポインターを速く動かしたとき）
+pose.happy = 1 回クリック
+pose.surprised = 同じ場所を 3 回連打
+pose.flustered = 同じ場所を 5 回連打
+pose.annoyed = 同じ場所を 8 回連打
+pose.angry = 同じ場所を 11 回連打
+pose.dizzy = 同じ場所を 16 回連打
+pose.sulk = 8 回以上連打されて止めた後
+
+dialog.pick = 画像を選ぶ
+dialog.filter.png = PNG 画像
+dialog.filter.all = すべての画像
+dialog.pack = Mom Pet 画像パック
+
+msg.resetall = すべてのポーズを 最初から入っているキャラクターの画像に戻しますか？
+msg.cantopen = このファイルは開けません。別の画像を選んでください。
+msg.opaque = この画像には透明な部分がないため、四角い板のままポインターについて行きます。\nこの画像を使いますか？
+msg.import.confirm = このパックには使える画像が {0} 枚あります。読み込むと今のカスタム画像はすべて置き換わります。続けますか？
+msg.import.none = この zip には使える画像がありません。画像はポーズの英語名で名付けてください（例：default.png、link.png）。
+msg.import.bad = この zip ファイルは開けません。
+msg.export.none = 書き出せるカスタム画像がまだありません。
+msg.export.done = {0} 枚の画像を書き出しました。
+
+section.effects = クリックエフェクト
+effects.choose = エフェクト
+effects.off = オフ
+effects.import = エフェクトを読み込む…
+effects.copy = コピーして編集
+effects.open = エフェクトのフォルダーを開く
+effects.reload = 再読み込み
+effects.filter = エフェクトの zip
+effects.none = この zip にはエフェクトがありません（effect.txt が必要です）。
+effects.broken = このエフェクトを読み込めませんでした：\n{0}
+effects.note = エフェクトは effect.txt と使う画像を入れたフォルダーです。「コピーして編集」で今のエフェクトを自分のエフェクトフォルダーにコピーして開きます。メモ帳で直して保存し、「再読み込み」を押すと反映されます。書き方はプログラムのフォルダーの docs\點擊特效說明.md（繁体字中国語）にあります。画像パックを書き出すと、今のエフェクトも一緒に入ります。
+
+fx.err.at = {0} 行目：{1}
+fx.err.line = この行に「=」がありません。
+fx.err.key = 「{0}」という設定はありません。
+fx.err.syntax = 式が読めません：「{0}」
+fx.err.end = 式が途中で終わっています。
+fx.err.paren = かっこが閉じていません。
+fx.err.name = 「{0}」はわかりません。
+fx.err.args = {0} には値が {1} 個必要です。
+fx.err.number = 「{0}」は数ではありません。
+fx.err.color = 「{0}」は色ではありません。#RRGGBB（例：#8B1E3F）と書いてください。
+fx.err.shape = 「{0}」という粒はありません。star、heart、dot、image が使えます。
+fx.err.image = 画像「{0}」がありません。effect.txt と同じフォルダーに置き、ファイル名だけを書いてください。
+fx.err.missing = エフェクト「{0}」がありません。
