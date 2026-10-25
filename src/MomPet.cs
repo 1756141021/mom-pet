@@ -654,6 +654,14 @@ sealed class Pet
         }
 
         double tx = mx + OFFSET_X * scale, ty = my + OFFSET_Y * scale;
+        // near the bottom or right edge of the monitor she stops at the edge instead of sliding off it
+        Sprite size0 = GetSprites(pose)[0];
+        var mon = new Native.MONITORINFO { cbSize = Marshal.SizeOf(typeof(Native.MONITORINFO)) };
+        if (Native.GetMonitorInfo(monitor, ref mon))
+        {
+            tx = Math.Min(tx, mon.rcMonitor.Right - size0.W);
+            ty = Math.Min(ty, mon.rcMonitor.Bottom - size0.H);
+        }
         if (needSnap)
         {
             px = tx; py = ty; vx = vy = 0;
