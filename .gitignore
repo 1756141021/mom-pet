@@ -7,3 +7,4 @@ stats.log
 /*.md
 # portfolio code the cursor was ported from
 reference/
+!/README.md
