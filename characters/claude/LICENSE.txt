@@ -1,0 +1,12 @@
+The images in this folder are licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0):
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+They are fan art of "Claude-chan" (Claude小姐), a character based on Claude, the AI
+assistant made by Anthropic. She is not an official Anthropic character, and Claude
+is a name of Anthropic.
+
+The character design is by ZipZipPipe, shared under CC BY-NC-SA 4.0. The images were
+drawn with ChatGPT image generation from that design and edited for Mom Pet (cut
+out and resized). You may not use these images commercially, and anything you make
+from them must be shared under the same license.

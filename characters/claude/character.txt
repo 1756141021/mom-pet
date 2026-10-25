@@ -1,0 +1,14 @@
+# Claude小姐：Anthropic 的 AI 助手 Claude 的擬人粉絲角色，不是官方設定。圖片授權見 LICENSE。
+name = Claude小姐
+name.en = Claude-chan
+name.ja = Claudeちゃん
+credit = 角色設計：ZipZipPipe｜CC BY-NC-SA 4.0｜非 Anthropic 官方角色
+credit.zh-hans = 角色设计：ZipZipPipe｜CC BY-NC-SA 4.0｜非 Anthropic 官方角色
+credit.en = Design by ZipZipPipe | CC BY-NC-SA 4.0 | not an official Anthropic character
+credit.ja = キャラクターデザイン：ZipZipPipe｜CC BY-NC-SA 4.0｜Anthropic 公式キャラクターではありません
+width = 165
+height = 168
+float.width = 200
+# 待機是捧著星芒在想事情，不是睡覺，所以頭上不飄 zZ
+sleep.z = off
+idle.frames = 700, 450, 600, 900

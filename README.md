@@ -4,7 +4,7 @@
 
 <p align="center"><img src="docs/media/follow.gif" width="720" alt="跟著游標跑"></p>
 
-> 內建兩個角色：我自己的 OC 海茵，還有吃白飯的藍色大肥魚 DeepSeek娘！在設定頁就能換~ Claude 小姐之後也會來哦！
+> 內建三個角色：吃白飯的藍色大肥魚 DeepSeek娘、捧著星芒想事情的 Claude小姐，還有我自己的 OC 海茵！在設定頁就能換~
 
 ## 下載
 
@@ -74,4 +74,4 @@
 
 圖片（`characters`、`assets`、`docs/media` 裡的）是 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)：要署名、不能商用、改了要用一樣的授權分享哦！
 
-DeepSeek娘是社群的二創角色，不是 DeepSeek 官方的設定。原型是上善无形的「溟月」，女僕鯨魚娘是 ZipZipPipe 畫的，詳細看 [characters/deepseek/LICENSE.txt](characters/deepseek/LICENSE.txt)。
+DeepSeek娘是社群的二創角色，不是 DeepSeek 官方的設定。原型是上善无形的「溟月」，女僕鯨魚娘是 ZipZipPipe 畫的，詳細看 [characters/deepseek/LICENSE.txt](characters/deepseek/LICENSE.txt)。Claude小姐也是粉絲角色，不是 Anthropic 官方的，角色設計是 ZipZipPipe，看 [characters/claude/LICENSE.txt](characters/claude/LICENSE.txt)。
