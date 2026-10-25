@@ -57,7 +57,7 @@ sealed class PoseImage : IDisposable
 sealed class CharacterInfo
 {
     public const string FileName = "character.txt";
-    public const string DefaultId = "hein";
+    public const string DefaultId = "deepseek";   // the more popular one; Hein was the default before 1.2
     const double FrameDelay = 0.15;          // a numbered frame without its own time in character.txt
 
     public readonly string Id, Dir;
@@ -96,7 +96,7 @@ sealed class CharacterInfo
 
     public static string BuiltinDir { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "characters"); } }
 
-    // every built-in character with a default.png, Hein first
+    // every built-in character with a default.png, the default one first
     public static List<CharacterInfo> All()
     {
         var list = new List<CharacterInfo>();
@@ -107,17 +107,17 @@ sealed class CharacterInfo
         return list;
     }
 
-    // the character with this id, else Hein, else the first one there is
+    // the character with this id, else the default one, else the first one there is
     public static CharacterInfo Find(string id)
     {
         List<CharacterInfo> all = All();
-        CharacterInfo hein = null;
+        CharacterInfo fallback = null;
         foreach (CharacterInfo c in all)
         {
             if (string.Equals(c.Id, id, StringComparison.OrdinalIgnoreCase)) return c;
-            if (c.Id == DefaultId) hein = c;
+            if (c.Id == DefaultId) fallback = c;
         }
-        if (hein != null) return hein;
+        if (fallback != null) return fallback;
         if (all.Count > 0) return all[0];
         throw new FileNotFoundException("No character with a default.png in " + BuiltinDir);
     }
