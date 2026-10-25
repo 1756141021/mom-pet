@@ -8,6 +8,8 @@
 
 > 内置三个角色：吃白饭的蓝色大肥鱼 DeepSeek娘、捧着星芒想事情的 Claude小姐，还有我自己的 OC 海茵！在设置里就能换~
 
+<p align="center"><img src="docs/media/characters.png" alt="三个角色"></p>
+
 ## 下载
 
 到 [Releases](../../releases) 下载 zip，解压后点 `MomPet.exe` 就好啦！Windows 10 / 11 都能直接用，不用另外装东西。第一次打开如果弹出「Windows 已保护你的电脑」，点「更多信息」再点「仍要运行」就好~
@@ -36,7 +38,7 @@
 
 **发呆**：鼠标 8 秒不动，她就开始做自己的事：DeepSeek娘捧着一大碗白饭吃，Claude小姐捧着橘色星芒想事情，海茵会打瞌睡、头上飘 z。一动鼠标她会被吓一跳！
 
-<p align="center"><img src="docs/media/idle.gif" width="420" alt="睡着和吓醒"></p>
+<p align="center"><img src="docs/media/idle.gif" width="420" alt="发呆和吓一跳"></p>
 
 **换表情**：Windows 的 16 种光标每种都有对应的表情。转圈圈的时候她在忙，变成手指的时候她在指东西，禁止符号的时候她会打叉叉~
 

@@ -8,6 +8,8 @@ A little desktop pet for Windows that follows your mouse around~! Her face chang
 
 > Three characters come built in: DeepSeek-chan, the big blue fish who lives on plain rice; Claude-chan, who holds an orange spark while she thinks; and my own OC, Hein! Switch between them in the settings~
 
+<p align="center"><img src="docs/media/characters.png" alt="The three characters"></p>
+
 ## Download
 
 Grab the zip from [Releases](../../releases), unzip it and run `MomPet.exe`, that's it! Works on Windows 10 / 11 with nothing else to install. If Windows says "Windows protected your PC" the first time, click "More info" and then "Run anyway"~
@@ -36,7 +38,7 @@ When you click links and buttons she only gets as far as surprised, so everyday 
 
 **Idling**: leave the mouse still for 8 seconds and she does her own thing: DeepSeek-chan tucks into a big bowl of rice, Claude-chan holds her orange spark and thinks, and Hein dozes off with little z's floating up. Move the mouse and she jumps!
 
-<p align="center"><img src="docs/media/idle.gif" width="420" alt="Dozing off and waking up"></p>
+<p align="center"><img src="docs/media/idle.gif" width="420" alt="Idling and jumping awake"></p>
 
 **Changing faces**: each of the 16 Windows cursors has its own pose. With the spinning cursor she's busy, with the hand she points at things, and with the "unavailable" sign she crosses her arms into an X~
 

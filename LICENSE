@@ -27,7 +27,8 @@ cover the images in characters/, assets/ and docs/media/, which are licensed und
 the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
 (CC BY-NC-SA 4.0): https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-- characters/hein, assets and docs/media: Copyright (c) 2026 hein.
+- characters/hein, assets and docs/media: Copyright (c) 2026 hein; the characters shown in
+  docs/media are credited as in their own folders.
 - characters/deepseek: fan art of the DeepSeek whale girl; who to credit is listed in
   characters/deepseek/LICENSE.txt.
 - characters/claude: fan art of Claude-chan, designed by ZipZipPipe; see
